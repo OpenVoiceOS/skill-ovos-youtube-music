@@ -1,0 +1,21 @@
+{
+  "name": "Youtube Music Skill",
+  "skillname": "skill-youtube-music",
+  "authorname": "JarbasSkills",
+  "foldername": "",
+  "url": "https://github.com/JarbasSkills/skill-youtube-music",
+  "branch": "dev",
+  "desktopFile": false,
+  "warning": "",
+  "systemDeps": false,
+  "platforms": [
+    "arm",
+    "arm64",
+    "i386",
+    "x86_64",
+    "ia64"
+  ],
+  "examples": [
+    "play António Variações"
+  ]
+}
