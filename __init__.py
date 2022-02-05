@@ -85,7 +85,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                         "skill_icon": self.skill_icon,
                         "image": v.thumbnail_url,
                         "bg_image": v.thumbnail_url,
-                        "title":title
+                        "title": title
                     }
 
             else:
