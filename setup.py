@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     install_requires=["ovos-plugin-manager>=0.0.1a3",
                       "tutubo",
-                      "ovos_workshop~=0.0.5a1"],
+                      "ovos_workshop~=0.0,>=0.0.5"],
     keywords='ovos skill plugin',
     entry_points={'ovos.plugin.skill': PLUGIN_ENTRY_POINT}
 )
