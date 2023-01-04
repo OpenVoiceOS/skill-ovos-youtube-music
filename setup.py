@@ -34,7 +34,6 @@ setup(
     name=PYPI_NAME,
     version="0.0.1",
     url=URL,
-    license='Apache-2.0',
     package_dir={SKILL_PKG: ""},
     package_data={SKILL_PKG: find_resource_files()},
     packages=[SKILL_PKG],
