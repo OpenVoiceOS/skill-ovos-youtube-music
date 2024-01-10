@@ -17,7 +17,7 @@ PLUGIN_ENTRY_POINT = f'{SKILL_NAME.lower()}.{SKILL_AUTHOR.lower()}={SKILL_PKG}:{
 
 def find_resource_files():
     # add any folder with files your skill uses here! 
-    resource_base_dirs = ("locale", "ui", "vocab", "dialog", "regex", "skill")
+    resource_base_dirs = ("locale", "res", "vocab", "dialog", "regex", "skill")
     base_dir = path.dirname(__file__)
     package_data = ["*.json"]
     for res in resource_base_dirs:
