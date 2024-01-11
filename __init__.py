@@ -122,7 +122,3 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                     "skill_id": self.skill_id
                 }
                 idx += 1
-
-
-def create_skill():
-    return YoutubeMusicSkill()
