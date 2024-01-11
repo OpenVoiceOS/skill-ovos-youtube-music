@@ -1,19 +1,19 @@
 from os.path import join, dirname
 
-from ovos_plugin_common_play.ocp import MediaType, PlaybackType
+from ovos_utils.ocp import MediaType, PlaybackType
 from ovos_utils.parse import fuzzy_match
-from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill, \
-    ocp_search
+from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
+from ovos_workshop.decorators import ocp_search
 from ovos_utils.process_utils import RuntimeRequirements
 from ovos_utils import classproperty
 from tutubo.ytmus import *
 
 
 class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
-    def __init__(self):
-        super(YoutubeMusicSkill, self).__init__("YoutubeMusic")
-        self.supported_media = [MediaType.GENERIC, MediaType.MUSIC]
+    def __init__(self, *args, **kwargs):
+        self.supported_media = [MediaType.MUSIC]
         self.skill_icon = join(dirname(__file__), "ui", "ytmus.png")
+        super().__init__(*args, **kwargs)
 
     @classproperty
     def runtime_requirements(self):
