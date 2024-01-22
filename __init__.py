@@ -38,7 +38,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
         self.bus.emit(Message(f"{self.skill_id}.precache"))
 
     def precache(self, message: Message = None):
-        """cache soundcloud searches and register some helper OCP keywords
+        """cache searches and register some helper OCP keywords
         populates featured_media
         """
 
@@ -82,7 +82,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
         self.register_ocp_keyword(MediaType.MUSIC, "music_streaming_provider", ["youtube music", "youtube"])
         self.register_ocp_keyword(MediaType.MUSIC, "music_genre",
                                   ["indie", "rock", "metal", "pop", "jazz", "ai covers"])
-        self.export_ocp_keywords_csv("youtube.csv")
+        #self.export_ocp_keywords_csv("youtube.csv")
 
     @timed_lru_cache(seconds=3600 * 3)
     def search_yt(self, phrase):
