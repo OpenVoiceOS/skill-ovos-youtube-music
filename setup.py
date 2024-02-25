@@ -6,7 +6,7 @@ from os import walk, path
 
 URL = "https://github.com/OpenVoiceOS/skill-ovos-youtube-music"
 SKILL_CLAZZ = "YoutubeMusicSkill"  # needs to match __init__.py class name
-PYPI_NAME = "skill-youtube-music"  # pip install PYPI_NAME
+PYPI_NAME = "ovos-skill-youtube-music"  # pip install PYPI_NAME
 
 
 # below derived from github url to ensure standard skill_id
