@@ -50,8 +50,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
         playlist_names = [k for k in self.playlists.keys()]
 
         if message is not None:
-            for query in self.settings.get("featured", ["zz top", "frank sinatra",
-                                                        "johnny cash", "AI covers"]):
+            for query in self.settings.get("featured", ["johnny cash"]):
                 for r in self.search_youtube_music(query, MediaType.MUSIC):
                     if "playlist" in r:
                         playlist_names.append(norm(r["title"]))
@@ -111,8 +110,8 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
     def search_youtube_music(self, phrase, media_type):
         # match the request media_type
         base_score = 0
-        if media_type == MediaType.VIDEO:
-            base_score += 25
+        if media_type == MediaType.MUSIC:
+            base_score += 10
 
         if self.voc_match(phrase, "youtube"):
             # explicitly requested youtube
@@ -190,7 +189,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                 yield entry
                 idx += 1
                 self.archive[entry["uri"]] = entry
-            self.archive.store()
+        self.archive.store()
 
     @ocp_featured_media()
     def featured_media(self):
@@ -240,10 +239,10 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
             LOG.debug("searching YoutubeMusic songs cache")
             for video in self.archive.values():
                 if song.lower() in video["title"].lower():
-                    s = base_score + 30
+                    s = base_score + 0.8 * fuzzy_match(song.lower(), video["title"].lower())
                     if artist and (artist.lower() in video["title"].lower() or
                                    artist.lower() in video.get("artist", "").lower()):
-                        s += 30
+                        s += 0.5 * fuzzy_match(artist.lower(), video["title"].lower())
                     video["match_confidence"] = min(100, s)
                     if video["media_type"] != media_type and media_type != MediaType.GENERIC:
                         video["match_confidence"] -= 20
@@ -255,7 +254,8 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                 if video["uri"] in urls:
                     continue
                 if artist.lower() in video["title"].lower():
-                    video["match_confidence"] = min(100, base_score + 40)
+                    s = base_score + 0.8 * fuzzy_match(artist.lower(), video["title"].lower())
+                    video["match_confidence"] = min(100, s)
                     if video["media_type"] != media_type and media_type != MediaType.GENERIC:
                         video["match_confidence"] -= 20
                     results.append(video)
@@ -265,7 +265,8 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
             LOG.debug("searching YoutubeMusic playlist cache")
             for k, pl in self.playlists.items():
                 if playlist.lower() in k.lower():
-                    pl["match_confidence"] = min(100, base_score + 35)
+                    s = base_score + 0.8 * fuzzy_match(k.lower(), playlist.lower())
+                    pl["match_confidence"] = min(100, s)
                     results.append(pl)
 
         if skill:
