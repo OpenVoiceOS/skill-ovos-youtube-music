@@ -15,7 +15,7 @@ from tutubo.ytmus import *
 class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
     def __init__(self, *args, **kwargs):
         self.supported_media = [MediaType.MUSIC]
-        self.skill_icon = join(dirname(__file__), "ui", "ytmus.png")
+        self.skill_icon = join(dirname(__file__), "res", "ytmus.png")
         self.archive = JsonStorageXDG("Youtube", subfolder="OCP")
         self.playlists = JsonStorageXDG("YoutubePlaylists", subfolder="OCP")
         super().__init__(*args, **kwargs)
