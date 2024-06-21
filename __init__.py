@@ -1,13 +1,14 @@
 from os.path import join, dirname
+from typing import Iterable, Union, List
 
 from json_database import JsonStorageXDG
 from ovos_utils import classproperty, timed_lru_cache
-from ovos_utils.ocp import MediaType, PlaybackType
-from ovos_utils.parse import fuzzy_match
+from ovos_utils.ocp import MediaType, PlaybackType, Playlist, PluginStream
+from ovos_utils.parse import fuzzy_match, MatchStrategy
 from ovos_utils.process_utils import RuntimeRequirements
 from ovos_workshop.decorators import ocp_search
 from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
-from tutubo.ytmus import *
+from tutubo.ytmus import search_yt_music, MusicVideo, MusicAlbum, MusicPlaylist, MusicArtist
 
 
 class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
@@ -36,7 +37,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
 
     # score
     def calc_score(self, phrase, match, idx=0, base_score=0,
-                   media_type=MediaType.GENERIC):
+                   media_type=MediaType.GENERIC) -> int:
         # idx represents the order from youtube
         score = base_score - idx * 5  # - 5% as we go down the results list
 
@@ -44,9 +45,11 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
             score -= 10  # penalty for video results
 
         if match.artist:
-            score += 80 * fuzzy_match(phrase.lower(), match.artist.lower())
+            score += 80 * fuzzy_match(phrase.lower(), match.artist.lower(),
+                                      strategy=MatchStrategy.TOKEN_SET_RATIO)
         if match.title:
-            score += 80 * fuzzy_match(phrase.lower(), match.title.lower())
+            score += 80 * fuzzy_match(phrase.lower(), match.title.lower(),
+                                      strategy=MatchStrategy.DAMERAU_LEVENSHTEIN_SIMILARITY)
 
         if media_type == MediaType.GENERIC:
             score -= 10
@@ -54,7 +57,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
 
     # common play
     @ocp_search()
-    def search_youtube_music(self, phrase, media_type):
+    def search_youtube_music(self, phrase, media_type) -> Iterable[Union[PluginStream, Playlist]]:
         # match the request media_type
         base_score = 0
         if media_type == MediaType.MUSIC:
@@ -72,47 +75,40 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                 score = self.calc_score(phrase, v, idx,
                                         base_score=base_score,
                                         media_type=media_type)
-                pl = [
-                    {
-                        "match_confidence": score,
-                        "media_type": MediaType.MUSIC,
-                        "length": entry.length * 1000 if entry.length else 0,
-                        "uri": "youtube//" + entry.watch_url,
-                        "playback": PlaybackType.AUDIO,
-                        "image": v.thumbnail_url,
-                        "bg_image": v.thumbnail_url,
-                        "skill_icon": self.skill_icon,
-                        "title": entry.title,
-                        "album": v.title,
-                        "artist": entry.artist,
-                        "skill_id": self.skill_id
-                    } for entry in v.tracks
-                ]
+                if isinstance(v, MusicArtist):
+                    title = v.artist + " (Featured Tracks)"
+                elif isinstance(v, MusicAlbum):
+                    title = v.title + " (Full Album)"
+                elif isinstance(v, MusicPlaylist):
+                    title = v.title + " (Playlist)"
+                else:
+                    title = v.title
+                pl = Playlist(title=title,
+                              artist=v.artist,
+                              match_confidence=score,
+                              skill_id=self.skill_id,
+                              skill_icon=self.skill_icon,
+                              playback=PlaybackType.AUDIO,
+                              media_type=MediaType.MUSIC)
+                for e in v.tracks:
+                    pl.append(PluginStream(
+                        extractor_id="youtube",
+                        stream=e.watch_url,
+                        match_confidence=score,
+                        playback=PlaybackType.AUDIO,
+                        media_type=MediaType.MUSIC,
+                        length=e.length * 1000 if e.length else 0,
+                        image=e.thumbnail_url,
+                        title=e.title,
+                        artist=e.artist,
+                        skill_id=self.skill_id,
+                        skill_icon=self.skill_icon
+                    ))
                 if pl:
-                    if isinstance(v, MusicArtist):
-                        title = v.artist + " (Featured Tracks)"
-                    elif isinstance(v, MusicAlbum):
-                        title = v.title + " (Full Album)"
-                    elif isinstance(v, MusicPlaylist):
-                        title = v.title + " (Playlist)"
-                    else:
-                        title = v.title
-
-                    entry = {
-                        "match_confidence": score,
-                        "media_type": MediaType.MUSIC,
-                        "playlist": pl,
-                        "playback": PlaybackType.AUDIO,
-                        "skill_icon": self.skill_icon,
-                        "image": v.thumbnail_url,
-                        "bg_image": v.thumbnail_url,
-                        "artist": v.artist,
-                        "title": title
-                    }
-                    yield entry
-                    self.playlists[entry["title"]] = entry
+                    yield pl
+                    self.playlists[pl.title] = pl.as_dict
                     for entry in pl:
-                        self.archive[entry["uri"]] = entry
+                        self.archive[entry.stream] = entry.as_dict
 
             else:
                 # videos / songs
@@ -120,22 +116,22 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                                         base_score=base_score,
                                         media_type=media_type)
                 # return as a video result (single track dict)
-                entry = {
-                    "match_confidence": score,
-                    "media_type": MediaType.VIDEO if isinstance(v, MusicVideo) else MediaType.MUSIC,
-                    "length": v.length * 1000 if v.length else 0,
-                    "uri": "youtube//" + v.watch_url,
-                    "playback": PlaybackType.AUDIO,
-                    "image": v.thumbnail_url,
-                    "bg_image": v.thumbnail_url,
-                    "skill_icon": self.skill_icon,
-                    "title": v.title,
-                    "artist": v.artist,
-                    "skill_id": self.skill_id
-                }
+                entry = PluginStream(
+                    extractor_id="youtube",
+                    stream=v.watch_url,
+                    match_confidence=score,
+                    playback=PlaybackType.AUDIO,
+                    media_type=MediaType.VIDEO if isinstance(v, MusicVideo) else MediaType.MUSIC,
+                    length=v.length * 1000 if v.length else 0,
+                    image=v.thumbnail_url,
+                    title=v.title,
+                    artist=v.artist,
+                    skill_id=self.skill_id,
+                    skill_icon=self.skill_icon
+                )
                 yield entry
                 idx += 1
-                self.archive[entry["uri"]] = entry
+                self.archive[entry.stream] = entry.as_dict
         self.archive.store()
 
 
