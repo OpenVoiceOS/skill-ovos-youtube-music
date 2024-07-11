@@ -17,6 +17,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
         self.playlists = JsonStorageXDG("YoutubePlaylists", subfolder="OCP")
         super().__init__(supported_media=[MediaType.MUSIC, MediaType.GENERIC],
                          skill_icon=join(dirname(__file__), "res", "ytmus.png"),
+                         skill_voc_filename="youtube_music_skill",
                          *args, **kwargs)
 
     @classproperty
@@ -31,7 +32,6 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                                    no_network_fallback=False,
                                    no_gui_fallback=True)
 
-    @timed_lru_cache(seconds=3600 * 3)
     def search_yt(self, phrase):
         return search_yt_music(phrase, as_dict=False)
 
