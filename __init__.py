@@ -15,7 +15,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
     def __init__(self, *args, **kwargs):
         self.archive = JsonStorageXDG("Youtube", subfolder="OCP")
         self.playlists = JsonStorageXDG("YoutubePlaylists", subfolder="OCP")
-        super().__init__(supported_media=[MediaType.MUSIC],
+        super().__init__(supported_media=[MediaType.MUSIC, MediaType.GENERIC],
                          skill_icon=join(dirname(__file__), "res", "ytmus.png"),
                          *args, **kwargs)
 
