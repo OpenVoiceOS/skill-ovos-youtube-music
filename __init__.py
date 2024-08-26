@@ -1,7 +1,6 @@
 from os.path import join, dirname
 from typing import Iterable, Union, List
 
-from json_database import JsonStorageXDG
 from ovos_utils import classproperty, timed_lru_cache
 from ovos_workshop.backwards_compat import MediaType, PlaybackType, Playlist, PluginStream
 from ovos_utils.parse import fuzzy_match, MatchStrategy
@@ -13,8 +12,6 @@ from tutubo.ytmus import search_yt_music, MusicVideo, MusicAlbum, MusicPlaylist,
 
 class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
     def __init__(self, *args, **kwargs):
-        self.archive = JsonStorageXDG("Youtube", subfolder="OCP")
-        self.playlists = JsonStorageXDG("YoutubePlaylists", subfolder="OCP")
         super().__init__(supported_media=[MediaType.MUSIC, MediaType.GENERIC],
                          skill_icon=join(dirname(__file__), "res", "ytmus.png"),
                          skill_voc_filename="youtube_music_skill",
@@ -106,10 +103,6 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                     ))
                 if pl:
                     yield pl
-                    self.playlists[pl.title] = pl.as_dict
-                    for entry in pl:
-                        self.archive[entry.stream] = entry.as_dict
-
             else:
                 # videos / songs
                 score = self.calc_score(phrase, v, idx,
@@ -131,8 +124,6 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                 )
                 yield entry
                 idx += 1
-                self.archive[entry.stream] = entry.as_dict
-        self.archive.store()
 
 
 if __name__ == "__main__":
