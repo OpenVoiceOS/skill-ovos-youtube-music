@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-from setuptools import setup
-import os
 from os import walk, path
+from os.path import dirname, join
 
+from setuptools import setup
 
 URL = "https://github.com/OpenVoiceOS/skill-ovos-youtube-music"
 SKILL_CLAZZ = "YoutubeMusicSkill"  # needs to match __init__.py class name
 PYPI_NAME = "ovos-skill-youtube-music"  # pip install PYPI_NAME
 
-
 # below derived from github url to ensure standard skill_id
 SKILL_AUTHOR, SKILL_NAME = URL.split(".com/")[-1].split("/")
 SKILL_PKG = SKILL_NAME.lower().replace('-', '_')
 PLUGIN_ENTRY_POINT = f'{SKILL_NAME.lower()}.{SKILL_AUTHOR.lower()}={SKILL_PKG}:{SKILL_CLAZZ}'
+
+
 # skill_id=package_name:SkillClass
 
 def find_resource_files():
@@ -30,9 +31,33 @@ def find_resource_files():
     return package_data
 
 
+def get_version():
+    """ Find the version of this skill"""
+    version_file = join(dirname(__file__), 'version.py')
+    major, minor, build, alpha = (None, None, None, None)
+    with open(version_file) as f:
+        for line in f:
+            if 'VERSION_MAJOR' in line:
+                major = line.split('=')[1].strip()
+            elif 'VERSION_MINOR' in line:
+                minor = line.split('=')[1].strip()
+            elif 'VERSION_BUILD' in line:
+                build = line.split('=')[1].strip()
+            elif 'VERSION_ALPHA' in line:
+                alpha = line.split('=')[1].strip()
+
+            if ((major and minor and build and alpha) or
+                    '# END_VERSION_BLOCK' in line):
+                break
+    version = f"{major}.{minor}.{build}"
+    if int(alpha):
+        version += f"a{alpha}"
+    return version
+
+
 setup(
     name=PYPI_NAME,
-    version="0.0.1",
+    version=get_version(),
     url=URL,
     package_dir={SKILL_PKG: ""},
     package_data={SKILL_PKG: find_resource_files()},
