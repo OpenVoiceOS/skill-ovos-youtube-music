@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/tree/HEAD)
+## [V0.1.1a1](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/tree/V0.1.1a1) (2024-09-06)
 
-[Full Changelog](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/compare/V0.0.1...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/compare/V0.0.1...V0.1.1a1)
 
 **Merged pull requests:**
 
