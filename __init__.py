@@ -1,8 +1,8 @@
 from os.path import join, dirname
-from typing import Iterable, Union, List
+from typing import Iterable, Union
 
-from ovos_utils import classproperty, timed_lru_cache
-from ovos_workshop.backwards_compat import MediaType, PlaybackType, Playlist, PluginStream
+from ovos_utils import classproperty
+from ovos_workshop.backwards_compat import MediaType, PlaybackType, Playlist, MediaEntry
 from ovos_utils.parse import fuzzy_match, MatchStrategy
 from ovos_utils.process_utils import RuntimeRequirements
 from ovos_workshop.decorators import ocp_search
@@ -54,7 +54,7 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
 
     # common play
     @ocp_search()
-    def search_youtube_music(self, phrase, media_type) -> Iterable[Union[PluginStream, Playlist]]:
+    def search_youtube_music(self, phrase, media_type) -> Iterable[Union[MediaEntry, Playlist]]:
         # match the request media_type
         base_score = 0
         if media_type == MediaType.MUSIC:
@@ -88,9 +88,8 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                               playback=PlaybackType.AUDIO,
                               media_type=MediaType.MUSIC)
                 for e in v.tracks:
-                    pl.append(PluginStream(
-                        extractor_id="youtube",
-                        stream=e.watch_url,
+                    pl.append(MediaEntry(
+                        uri=e.watch_url,
                         match_confidence=score,
                         playback=PlaybackType.AUDIO,
                         media_type=MediaType.MUSIC,
@@ -109,9 +108,8 @@ class YoutubeMusicSkill(OVOSCommonPlaybackSkill):
                                         base_score=base_score,
                                         media_type=media_type)
                 # return as a video result (single track dict)
-                entry = PluginStream(
-                    extractor_id="youtube",
-                    stream=v.watch_url,
+                entry = MediaEntry(
+                    uri=v.watch_url,
                     match_confidence=score,
                     playback=PlaybackType.AUDIO,
                     media_type=MediaType.VIDEO if isinstance(v, MusicVideo) else MediaType.MUSIC,
