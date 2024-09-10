@@ -1,35 +1,12 @@
 # Changelog
 
-## [V0.1.1a1](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/tree/V0.1.1a1) (2024-09-06)
+## [0.1.1a1](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/tree/0.1.1a1) (2024-09-10)
 
-[Full Changelog](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/compare/V0.0.1...V0.1.1a1)
-
-**Merged pull requests:**
-
-- fix:raw\_urls [\#14](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/14) ([JarbasAl](https://github.com/JarbasAl))
-
-## [V0.0.1](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/tree/V0.0.1) (2024-09-02)
-
-[Full Changelog](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/compare/0c36f8d6b01e7b4f5152920b9c4472fc26fad4ed...V0.0.1)
-
-**Implemented enhancements:**
-
-- modernize [\#5](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/5) ([NeonJarbas](https://github.com/NeonJarbas))
-
-**Closed issues:**
-
-- Plug-in as requirement? [\#7](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/issues/7)
-- Skil does not work [\#6](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/issues/6)
-- No module named 'mycroft\_bus\_client' [\#3](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/issues/3)
+[Full Changelog](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/compare/V0.1.1...0.1.1a1)
 
 **Merged pull requests:**
 
-- Create Italian translation [\#12](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/12) ([airon90](https://github.com/airon90))
-- fix/remove unused cache leftovers [\#11](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/11) ([JarbasAl](https://github.com/JarbasAl))
-- refactor/ocp\_modernize [\#9](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/9) ([JarbasAl](https://github.com/JarbasAl))
-- modernize for core 0.0.8 [\#4](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/4) ([NeonJarbas](https://github.com/NeonJarbas))
-- feat/runtime\_requirements [\#2](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/2) ([JarbasAl](https://github.com/JarbasAl))
-- Loosen ovos\_workshop dependency to support current version [\#1](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/1) ([NeonDaniel](https://github.com/NeonDaniel))
+- chore:automations [\#15](https://github.com/OpenVoiceOS/skill-ovos-youtube-music/pull/15) ([JarbasAl](https://github.com/JarbasAl))
 
 
 
