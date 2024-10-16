@@ -3,6 +3,7 @@ from os import walk, path
 from os.path import dirname, join
 
 from setuptools import setup
+import os
 
 URL = "https://github.com/OpenVoiceOS/skill-ovos-youtube-music"
 SKILL_CLAZZ = "YoutubeMusicSkill"  # needs to match __init__.py class name
@@ -55,6 +56,19 @@ def get_version():
     return version
 
 
+def get_requirements(requirements_filename: str):
+    requirements_file = path.join(path.abspath(path.dirname(__file__)),
+                                  requirements_filename)
+    with open(requirements_file, 'r', encoding='utf-8') as r:
+        requirements = r.readlines()
+    requirements = [r.strip() for r in requirements if r.strip()
+                    and not r.strip().startswith("#")]
+    if 'MYCROFT_LOOSE_REQUIREMENTS' in os.environ:
+        print('USING LOOSE REQUIREMENTS!')
+        requirements = [r.replace('==', '>=').replace('~=', '>=') for r in requirements]
+    return requirements
+
+
 setup(
     name=PYPI_NAME,
     version=get_version(),
@@ -67,9 +81,7 @@ setup(
     author_email='jarbasai@mailfence.com',
     license='Apache-2.0',
     include_package_data=True,
-    install_requires=["ovos-plugin-manager>=0.0.1a3",
-                      "tutubo",
-                      "ovos_workshop~=0.0,>=0.0.5"],
+    install_requires=get_requirements("requirements.txt"),
     keywords='ovos skill plugin',
     entry_points={'ovos.plugin.skill': PLUGIN_ENTRY_POINT}
 )
